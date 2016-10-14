@@ -54,11 +54,11 @@ def _extract_error_and_maybe_raise(response, expected_h1):
     if not response.text:
         raise UnexpectedResponse
     h1 = response.soup.h1.text.strip()
-    if h1 != expected_h1:
-        raise UnexpectedResponse(h1, response.soup)
     error = response.soup.find('ul', {'class': 'operation-results-error'})
     if error:
         text = error.get_text().strip()
         if text:
             raise BadRequest.from_error_text(text)
         error.extract()
+    if h1 != expected_h1:
+        raise UnexpectedResponse(h1, response.soup)

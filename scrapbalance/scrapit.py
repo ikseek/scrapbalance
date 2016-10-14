@@ -1,13 +1,20 @@
-from re import compile as regex
-
 from requests.adapters import HTTPAdapter
 
-from .errors import UnexpectedResponse
+from .errors import *
 from .scrap import MobileScrapper
 
 
+class BadITLogin(BadLogin):
+    ERROR_REGEX = regex(
+        r'0610 - указанный номер телефона не зарегистрирован в системе')
+
+
+class BadITPassword(BadPassword):
+    ERROR_REGEX = regex(r'063[12] - указан неверный пароль')
+
+
 class ITAssa(MobileScrapper):
-    PHONE_FORMAT_REGEX = regex(r"\+38(0(94)\d{7})$")
+    PHONE_FORMAT_REGEX = regex(r"\+38(0(94)\d{7,7})$")
 
     def __init__(self, browser):
         self._browser = browser
@@ -52,6 +59,9 @@ def _extract_error_and_maybe_raise(response, expected_h1):
     response.raise_for_status()
     if not response.text:
         raise UnexpectedResponse
+    error = response.soup.find('p', {'class': 'error'})
+    if error:
+        raise BadRequest.from_error_text(error.text.strip())
     h1 = response.soup.h1.text.strip()
     if h1 != expected_h1:
         raise UnexpectedResponse(h1, response.soup)

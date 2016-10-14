@@ -23,12 +23,8 @@ class BadRequest(Exception):
 
 
 class BadLogin(BadRequest):
-    ERROR_REGEX = regex(r'Введен неизвестный номер телефона')
+    ERROR_REGEX = regex(r'^$')
 
 
 class BadPassword(BadRequest):
-    ERROR_REGEX = regex(r'Введен неверный пароль')
-
-
-class AccessBlocked(BadRequest):
-    ERROR_REGEX = regex(r'Доступ к Интернет-Помощнику заблокирован')
+    ERROR_REGEX = regex(r'^$')

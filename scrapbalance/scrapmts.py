@@ -5,7 +5,7 @@ BALANCE_REGEX = regex(r'Ваш текущий баланс: ([0-9,]+) грн')
 
 
 class MTSHelper(MobileScrapper):
-    PHONE_FORMAT_REGEX = regex(r"\+380((99)\d{7})$")
+    PHONE_FORMAT_REGEX = regex(r"\+380((50|95|99|66)\d{7})$")
 
     @staticmethod
     def login(phone, password):

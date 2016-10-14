@@ -18,8 +18,9 @@ def print_status(login, password, cookies):
     except UnexpectedResponse:
         scrapper = scrap_type.login(login, password)
         status = scrapper.status
-    print(login)
+    print(">>>", login, "<<<")
     print("\n".join(status))
+    print()
     return scrapper.save()
 
 

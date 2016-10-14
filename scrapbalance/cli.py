@@ -1,23 +1,22 @@
-from os.path import expanduser
 from argparse import ArgumentParser
-from configparser import ConfigParser
 from collections import OrderedDict
+from configparser import ConfigParser
 from getpass import getpass
+from os.path import expanduser
 
-from scrapbalance.scrapmts import MTSHelper
 from scrapbalance.errors import UnexpectedResponse
-
+from scrapbalance.scrap import MobileScrapper
 
 CFG_FILE_NAME = expanduser("~/.scrapbalance")
 
 
 def print_status(login, password, cookies):
-    scrapper = MTSHelper.restore(cookies)
+    scrap_type = MobileScrapper.pick(login)
+    scrapper = scrap_type.restore(cookies)
     try:
         status = scrapper.status
     except UnexpectedResponse:
-        print("RETRY")
-        scrapper = MTSHelper.login(login, password)
+        scrapper = scrap_type.login(login, password)
         status = scrapper.status
     print(login)
     print("\n".join(status))

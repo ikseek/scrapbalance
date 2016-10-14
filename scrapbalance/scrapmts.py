@@ -1,34 +1,24 @@
-from mechanicalsoup import Browser
-
 from .errors import *
+from .scrap import MobileScrapper
 
 BALANCE_REGEX = regex(r'Ваш текущий баланс: ([0-9,]+) грн')
 
 
-class MTSHelper:
-    def __init__(self, browser):
-        self._browser = browser
+class MTSHelper(MobileScrapper):
+    PHONE_FORMAT_REGEX = regex(r"\+380((99)\d{7})$")
 
     @staticmethod
     def login(phone, password):
-        browser = Browser(soup_config={'features': 'html.parser'})
+        login = MTSHelper.extract_login(phone)
+        browser = MTSHelper._make_browser()
         login_page = browser.get(
             "https://ihelper-prp.mts.com.ua/SelfCarePda/Security.mvc/LogOn")
         login_form = login_page.soup.form
-        login_form.find('input', {'name': 'username'})['value'] = phone
+        login_form.find('input', {'name': 'username'})['value'] = login
         login_form.find('input', {'name': 'password'})['value'] = password
         logged_in = browser.submit(login_form, login_page.url)
         _extract_error_and_maybe_raise(logged_in, "Система «Мой МТС»")
         return MTSHelper(browser)
-
-    @staticmethod
-    def restore(cookies):
-        browser = Browser(soup_config={'features': 'html.parser'})
-        browser.session.cookies.update(cookies)
-        return MTSHelper(browser)
-
-    def save(self):
-        return self._get_browser().session.cookies.get_dict()
 
     def logout(self):
         self._get_page_soup(
@@ -40,12 +30,6 @@ class MTSHelper:
         page = self._get_browser().get(url)
         _extract_error_and_maybe_raise(page, expected_h1)
         return page.soup
-
-    def _get_browser(self):
-        if self._browser:
-            return self._browser
-        else:
-            raise NotLoggedIn
 
     @property
     def status(self):

@@ -11,17 +11,20 @@ CFG_FILE_NAME = expanduser("~/.scrapbalance")
 
 
 def print_status(login, password, cookies):
+    print(">>>", login, "<<<")
     scrap_type = MobileScrapper.pick(login)
     scrapper = scrap_type.restore(cookies)
     try:
-        status = scrapper.status
-    except UnexpectedResponse:
-        scrapper = scrap_type.login(login, password)
-        status = scrapper.status
-    print(">>>", login, "<<<")
-    print("\n".join(status))
-    print()
-    return scrapper.save()
+        try:
+            status = scrapper.status
+        except UnexpectedResponse:
+            scrapper = scrap_type.login(login, password)
+            status = scrapper.status
+        print("\n".join(status))
+        return scrapper.save()
+    except Exception as e:
+        print(e)
+        return {}
 
 
 def parse_args():

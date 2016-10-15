@@ -1,9 +1,14 @@
 from re import compile as regex
 
 from mechanicalsoup import Browser
+from requests import utils
 
 from .errors import NotLoggedIn
 
+UA = "Mozilla/5.0 (iPhone; CPU iPhone OS 10_0 like Mac OS X) " \
+     "AppleWebKit/602.1.50 (KHTML, like Gecko) " \
+     "Version/10.0 Mobile/14A345 Safari/602.1"
+utils.default_user_agent = lambda n=1: UA
 
 class MobileScrapper:
     PHONE_FORMAT_REGEX = regex(r"^()$")

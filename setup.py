@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name='scrapbalance',
-    version='0.2',
+    version='0.3',
     packages=['scrapbalance'],
     url='',
     license='MIT',
